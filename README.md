@@ -1,3 +1,6 @@
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Flask](https://img.shields.io/badge/Flask-Backend-black)
+![Transformers](https://img.shields.io/badge/HuggingFace-Transformers-yellow)
 # YouTube Video Summariser
 
 A Chrome extension that generates concise summaries of YouTube videos by extracting video transcripts and processing them with a Transformer-based NLP model. The project consists of a Flask backend API and a Chrome extension frontend.
