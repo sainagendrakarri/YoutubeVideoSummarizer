@@ -1,18 +1,38 @@
 const btn = document.getElementById("summarise");
-btn.addEventListener("click", function() {
+
+btn.addEventListener("click", async () => {
     btn.disabled = true;
-    btn.innerHTML = "Summarising...";
-    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-        var url = tabs[0].url;
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "http://127.0.0.1:5000/summary?url=" + url, true);
-        xhr.onload = function() {
-            var text = xhr.responseText;
-            const p = document.getElementById("output");
-            p.innerHTML = text;
-            btn.disabled = false;
-            btn.innerHTML = "Summarise";
+    btn.textContent = "Summarising...";
+
+    const output = document.getElementById("output");
+
+    try {
+        const [tab] = await chrome.tabs.query({
+            active: true,
+            currentWindow: true
+        });
+
+    const url = new URL(tab.url);
+
+    const videoId = url.searchParams.get("v");
+
+    const response = await fetch(
+        `http://127.0.0.1:5000/summary?videoId=${videoId}`
+    );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            output.textContent = data.error || "Something went wrong.";
+        } else {
+            output.textContent = data.summary;
         }
-        xhr.send();
-    });
+
+    } catch (error) {
+        output.textContent = "Unable to connect to the backend server.";
+        console.error(error);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Summarise";
+    }
 });
